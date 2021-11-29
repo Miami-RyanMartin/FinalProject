@@ -1,0 +1,178 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Player : MonoBehaviour
+{
+    private GameObject _mainCamera;
+    private Rigidbody2D playerRigidbody;
+    public float moveSpeed = 100;
+    Vector2 playerInput;
+    private Ray mouseRay;
+    private RaycastHit hit;
+    private BoxCollider2D playerBoxCollider;
+    public LayerMask jumpLayerMask;
+    [SerializeField]  int playerMaxHealth = 10;
+    [SerializeField] int playerCurrentHealth = 10;
+    private float invincibility = .1f;
+    private bool isInvincible = false;
+    public Vector2 spawnLocation = new Vector2(0,1.5f);
+    public bool hasRedCollectable = false;
+    public bool hasGreenCollectable = false;
+    public bool hasBlueCollectable = false;
+
+    private UIManager UI = null;
+
+    private GameManager GM = null;
+
+    GameObject blueCollectable = null;
+    GameObject redCollectable = null;
+    GameObject greenCollectable = null;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        blueCollectable = GameObject.FindGameObjectWithTag("BlueCollectable");
+        if (blueCollectable == null)
+        {
+            hasBlueCollectable = true;
+           
+        }
+        redCollectable = GameObject.FindGameObjectWithTag("RedCollectable");
+        if (redCollectable == null)
+        {
+            hasRedCollectable = true;
+        }
+        greenCollectable = GameObject.FindGameObjectWithTag("GreenCollectable");
+        if (greenCollectable == null)
+        {
+            hasGreenCollectable = true;
+        }
+
+        playerRigidbody = GetComponent<Rigidbody2D>();
+        playerBoxCollider = transform.GetComponent<BoxCollider2D>();
+        playerRigidbody.freezeRotation = true;
+        isInvincible = false;
+
+        UI = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (UI != null)
+        {
+            UI.UpdateHealth(playerCurrentHealth,playerMaxHealth);
+        }
+        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
+
+    
+
+    void FixedUpdate()
+    {
+        if (GM.paused == false)
+        {
+            playerRigidbody.velocity = new Vector2(playerInput.x * Time.deltaTime * moveSpeed, playerRigidbody.velocity.y);
+        }
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (GM.paused == false)
+        {
+            IsGrounded();
+            Jump();
+            playerInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (isInvincible)
+            {
+                invincibility -= Time.deltaTime;
+                if (invincibility <= 0.0f)
+                {
+                    isInvincible = false;
+                    invincibility = .1f;
+                }
+            }
+        }
+
+        
+    }
+
+    public void Jump()
+    {
+        if(Input.GetButtonDown("Jump") && IsGrounded())
+        {
+            playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, 20.0f);
+        }
+    }
+
+    private bool IsGrounded()
+    {
+        float extraHeight = 1f;
+        RaycastHit2D raycastHit = Physics2D.Raycast(playerBoxCollider.bounds.center, Vector2.down, playerBoxCollider.bounds.extents.y + extraHeight, jumpLayerMask);
+        Color rayColor;
+        if(raycastHit.collider != null)
+        {
+            rayColor = Color.green;
+        }
+        else
+        {
+            rayColor = Color.red;
+        }
+        Debug.DrawRay(playerBoxCollider.bounds.center, Vector2.down * (playerBoxCollider.bounds.extents.y + extraHeight),rayColor);
+        return raycastHit.collider != null;
+
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("EnemyBullet"))
+        {
+            if(!isInvincible)
+            {
+                isInvincible = true;
+                playerCurrentHealth--;
+                UI.UpdateHealth(playerCurrentHealth, playerMaxHealth);
+                GameObject enemyBullet = collision.gameObject;
+                Destroy(enemyBullet);
+                if (playerCurrentHealth == 0)
+                {
+                    GM.playerAlive = false;
+                    Destroy(this.gameObject);
+                }
+            }
+        }
+
+        if(collision.gameObject.CompareTag("BlueCollectable"))
+        {
+            hasBlueCollectable = true;
+            GameObject Collectable = collision.gameObject;
+            UI.CollectedBlueCollectable();
+            Destroy(Collectable);
+        }
+        if(collision.gameObject.CompareTag("GreenCollectable"))
+        {
+            hasGreenCollectable = true;
+            GameObject Collectable = collision.gameObject;
+            UI.CollectedGreenCollectable();
+            Destroy(Collectable);
+        }
+        if(collision.gameObject.CompareTag("RedCollectable"))
+        {
+            hasRedCollectable = true;
+            GameObject Collectable = collision.gameObject;
+            UI.CollectedRedCollectable();
+            Destroy(Collectable);
+        }
+    }
+
+
+    public void setSpawnLocation(Vector2 spawn)
+    {
+        spawnLocation = spawn;
+        GM.UpdateSpawnLocation(spawnLocation);
+    }
+
+    public Vector2 getSpawnLocation()
+    {
+        return spawnLocation;
+    }
+}
