@@ -6,7 +6,7 @@ public class PlayerShoot : MonoBehaviour
 {
     [SerializeField] GameObject playerBulletPrefab;
     [SerializeField] GameObject fireLocation;
-    [SerializeField] float speed = 12.0f;
+    float speed;
     private float fireRate = .3f;
     private float nextFire;
     private GameManager GM = null;
@@ -24,7 +24,7 @@ public class PlayerShoot : MonoBehaviour
     void Start()
     {
         nextFire = Time.time;
-        speed = 12.0f;
+        speed = 16.0f;
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 

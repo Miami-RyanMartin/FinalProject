@@ -5,8 +5,8 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 
-    [SerializeField] int enemyCurrentHealth = 10;
-    [SerializeField] int enemyMaxHealth = 10;
+    [SerializeField] int enemyCurrentHealth;
+    [SerializeField] int enemyMaxHealth;
     private float invincibility = .1f;
     public bool isInvincible = false;
     private GameManager GM = null;
@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     private BoxCollider2D enemyBoxCollider;
     [SerializeField] GameObject bulletCollider = null;
     public bool notStartedRespawn = true;
+    [SerializeField] Color startColor;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +26,7 @@ public class Enemy : MonoBehaviour
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
         enemySpriteRenderer = GetComponent<SpriteRenderer>();
         enemyBoxCollider = GetComponent<BoxCollider2D>();
+        Color startColor = this.gameObject.GetComponent<SpriteRenderer>().color;
     }
 
     // Update is called once per frame
@@ -32,12 +34,17 @@ public class Enemy : MonoBehaviour
     {
         if (isInvincible)
         {
+            enemySpriteRenderer.color = Color.yellow;
             invincibility -= Time.deltaTime;
             if (invincibility <= 0.0f)
             {
                 isInvincible = false;
                 invincibility = .1f;
             }
+        }
+        else
+        {
+            enemySpriteRenderer.color = startColor;
         }
 
         if(enemyCurrentHealth<=0 && notStartedRespawn)

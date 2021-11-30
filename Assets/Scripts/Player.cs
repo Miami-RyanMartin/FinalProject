@@ -12,14 +12,15 @@ public class Player : MonoBehaviour
     private RaycastHit hit;
     private BoxCollider2D playerBoxCollider;
     public LayerMask jumpLayerMask;
-    [SerializeField]  int playerMaxHealth = 10;
-    [SerializeField] int playerCurrentHealth = 10;
+    private int playerMaxHealth = 10;
+    private int playerCurrentHealth = 10;
     private float invincibility = .1f;
     private bool isInvincible = false;
     public Vector2 spawnLocation = new Vector2(0,1.5f);
     public bool hasRedCollectable = false;
     public bool hasGreenCollectable = false;
     public bool hasBlueCollectable = false;
+    private SpriteRenderer playerSpriteRender = null;
 
     private UIManager UI = null;
 
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playerSpriteRender = gameObject.GetComponent<SpriteRenderer>();
         blueCollectable = GameObject.FindGameObjectWithTag("BlueCollectable");
         if (blueCollectable == null)
         {
@@ -83,12 +85,17 @@ public class Player : MonoBehaviour
             playerInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             if (isInvincible)
             {
+                playerSpriteRender.color = Color.red;
                 invincibility -= Time.deltaTime;
                 if (invincibility <= 0.0f)
                 {
                     isInvincible = false;
                     invincibility = .1f;
                 }
+            }
+            else
+            {
+                playerSpriteRender.color = Color.white;
             }
         }
 
@@ -105,7 +112,7 @@ public class Player : MonoBehaviour
 
     private bool IsGrounded()
     {
-        float extraHeight = 1f;
+        float extraHeight = 1.5f;
         RaycastHit2D raycastHit = Physics2D.Raycast(playerBoxCollider.bounds.center, Vector2.down, playerBoxCollider.bounds.extents.y + extraHeight, jumpLayerMask);
         Color rayColor;
         if(raycastHit.collider != null)
@@ -165,7 +172,7 @@ public class Player : MonoBehaviour
     }
 
 
-    public void setSpawnLocation(Vector2 spawn)
+    public void SetSpawnLocation(Vector2 spawn)
     {
         spawnLocation = spawn;
         GM.UpdateSpawnLocation(spawnLocation);
@@ -174,5 +181,11 @@ public class Player : MonoBehaviour
     public Vector2 getSpawnLocation()
     {
         return spawnLocation;
+    }
+
+    public void SetPlayerHealth(int playerHealth)
+    {
+        playerCurrentHealth = playerHealth;
+        UI.UpdateHealth(playerCurrentHealth, playerMaxHealth);
     }
 }

@@ -8,8 +8,6 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Image healthBar = null;
     [SerializeField] private Button playButton = null;
-    [SerializeField] private Button quitButton = null;
-    [SerializeField] private Button resumeButton = null;
     [SerializeField] private GameObject hideButtonAbility = null;
     [SerializeField] private GameObject hideQuitButtonAbility = null;
     [SerializeField] private GameObject hideResumeButtonAbility = null;

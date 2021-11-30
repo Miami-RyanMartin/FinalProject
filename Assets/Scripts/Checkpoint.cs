@@ -22,7 +22,9 @@ public class Checkpoint : MonoBehaviour
         if(collision.CompareTag("Player"))
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-            player.setSpawnLocation(checkpoint);
+            player.SetSpawnLocation(checkpoint);
+            player.SetPlayerHealth(10);
+            
             //SpriteRenderer checkpointColor = GetComponent<SpriteRenderer>();
             //checkpointColor.color = Color.green;
         }
