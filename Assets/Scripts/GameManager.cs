@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public bool playerAlive = false;
+    public bool playerAlive = true;
     [SerializeField] GameObject player = null;
     Vector2 spawnSpot = new Vector2(0, -1.5f);
     public bool canSpawn = false;
@@ -13,26 +13,31 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gamePaused = null;
     [SerializeField] private GameObject resumeButton = null;
     [SerializeField] private GameObject quitButton = null;
+    private AudioSource playerDeath = null;
+    private AudioSource enemyDeath = null;
+    [SerializeField] private AudioSource[] audioChoices = null;
+
     // Start is called before the first frame update
     void Start()
     {
         Instantiate(player, spawnSpot, transform.rotation);
         playerAlive = true;
         canSpawn = false;
+        playerDeath = GetComponent<AudioSource>();
+        playerDeath = audioChoices[0];
+        enemyDeath = audioChoices[1];
+ 
     }
 
     // Update is called once per frame
     void Update()
     {
-
         if(!playerAlive && canSpawn)
         {
             Instantiate(player, spawnSpot, transform.rotation);
             playerAlive = true;
             canSpawn = false;
-           
         }
-
 
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -61,5 +66,15 @@ public class GameManager : MonoBehaviour
         quitButton.SetActive(false);
         Time.timeScale = 1;
         paused = false;
+    }
+
+    public void PlayDeathAudio()
+    {
+        playerDeath.Play();
+    }
+
+    public void PlayEnemyDeathAudio()
+    {
+        enemyDeath.Play();
     }
 }

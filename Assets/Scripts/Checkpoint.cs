@@ -8,13 +8,15 @@ public class Checkpoint : MonoBehaviour
 
     private Vector2 playerCheckpoint;
     private Player player = null;
+    private AudioSource checkPointReached = null;
 
 
     void Start()
     {
         SpriteRenderer checkpointColor = GetComponent<SpriteRenderer>();
         checkpointColor.color = Color.yellow;
-       
+        checkPointReached = GetComponent<AudioSource>();
+
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -22,6 +24,7 @@ public class Checkpoint : MonoBehaviour
         if(collision.CompareTag("Player"))
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            checkPointReached.Play();
             player.SetSpawnLocation(checkpoint);
             player.SetPlayerHealth(10);
             

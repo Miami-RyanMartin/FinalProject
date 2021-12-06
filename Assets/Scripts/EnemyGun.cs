@@ -11,6 +11,7 @@ public class EnemyGun : MonoBehaviour
     public LayerMask hitObject;
     [SerializeField] public GameObject player;
     private bool canFire;
+    private AudioSource gunFire = null;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +21,7 @@ public class EnemyGun : MonoBehaviour
         {
             player = GameObject.FindGameObjectWithTag("Player");
         }
+        gunFire = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -52,6 +54,7 @@ public class EnemyGun : MonoBehaviour
         Vector2 firePos = new Vector2(fireLocation.transform.position.x, fireLocation.transform.position.y);
         RaycastHit2D hit = Physics2D.Raycast(firePos, aimPos - firePos, 10.0f, hitObject);
         Debug.DrawLine(firePos, (aimPos - firePos) * 100, Color.green);
+        gunFire.Play();
         GameObject newBullet = Instantiate(enemyBulletPrefab, firePos, transform.rotation);
         newBullet.GetComponent<Rigidbody2D>().velocity = (aimPos - firePos).normalized * 10.0f;
 

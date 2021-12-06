@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] GameObject bulletCollider = null;
     public bool notStartedRespawn = true;
     [SerializeField] Color startColor;
+    private AudioSource enemyHit = null;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +28,7 @@ public class Enemy : MonoBehaviour
         enemySpriteRenderer = GetComponent<SpriteRenderer>();
         enemyBoxCollider = GetComponent<BoxCollider2D>();
         Color startColor = this.gameObject.GetComponent<SpriteRenderer>().color;
+        enemyHit = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -49,6 +51,7 @@ public class Enemy : MonoBehaviour
 
         if(enemyCurrentHealth<=0 && notStartedRespawn)
         {
+            GM.PlayEnemyDeathAudio();
             GetComponent<BoxCollider2D>().enabled = false;
             enemySpriteRenderer.enabled = false;
             enemyGun.SetActive(false);
@@ -66,6 +69,7 @@ public class Enemy : MonoBehaviour
         {
             if (!isInvincible)
             {
+                enemyHit.Play();
                 isInvincible = true;
                 enemyCurrentHealth--;
                 GameObject playerBullet = collision.gameObject;

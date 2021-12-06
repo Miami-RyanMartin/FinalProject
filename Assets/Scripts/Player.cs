@@ -30,6 +30,10 @@ public class Player : MonoBehaviour
     GameObject redCollectable = null;
     GameObject greenCollectable = null;
 
+    private AudioSource playerHit = null;
+    private AudioSource collectableNoise = null;
+    [SerializeField] private AudioSource[] audioChoices = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,6 +66,9 @@ public class Player : MonoBehaviour
             UI.UpdateHealth(playerCurrentHealth,playerMaxHealth);
         }
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+        playerHit = audioChoices[0];
+        collectableNoise = audioChoices[1];
+
     }
 
     
@@ -138,10 +145,12 @@ public class Player : MonoBehaviour
                 isInvincible = true;
                 playerCurrentHealth--;
                 UI.UpdateHealth(playerCurrentHealth, playerMaxHealth);
+                playerHit.Play();
                 GameObject enemyBullet = collision.gameObject;
                 Destroy(enemyBullet);
                 if (playerCurrentHealth == 0)
                 {
+                    GM.PlayDeathAudio();
                     GM.playerAlive = false;
                     Destroy(this.gameObject);
                 }
@@ -150,20 +159,25 @@ public class Player : MonoBehaviour
 
         if(collision.gameObject.CompareTag("BlueCollectable"))
         {
+           
             hasBlueCollectable = true;
             GameObject Collectable = collision.gameObject;
+            collectableNoise.Play();
             UI.CollectedBlueCollectable();
             Destroy(Collectable);
         }
         if(collision.gameObject.CompareTag("GreenCollectable"))
         {
+            
             hasGreenCollectable = true;
             GameObject Collectable = collision.gameObject;
             UI.CollectedGreenCollectable();
+            collectableNoise.Play();
             Destroy(Collectable);
         }
         if(collision.gameObject.CompareTag("RedCollectable"))
         {
+            collectableNoise.Play();
             hasRedCollectable = true;
             GameObject Collectable = collision.gameObject;
             UI.CollectedRedCollectable();

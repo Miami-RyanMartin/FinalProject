@@ -10,6 +10,7 @@ public class PlayerShoot : MonoBehaviour
     private float fireRate = .3f;
     private float nextFire;
     private GameManager GM = null;
+    private AudioSource gunFire = null;
 
     public LayerMask hitObject;
     Camera mainCamera;
@@ -26,6 +27,8 @@ public class PlayerShoot : MonoBehaviour
         nextFire = Time.time;
         speed = 16.0f;
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gunFire = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -37,7 +40,6 @@ public class PlayerShoot : MonoBehaviour
             difference.Normalize();
             float gunRotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, gunRotationZ);
-
             if (Time.time > nextFire && Input.GetButton("Fire1"))
             {
                 FireGun();
@@ -53,6 +55,7 @@ public class PlayerShoot : MonoBehaviour
         Vector2 firePos = new Vector2(fireLocation.transform.position.x, fireLocation.transform.position.y);
         RaycastHit2D hit = Physics2D.Raycast(firePos, mousePos - firePos, 10.0f, hitObject);
         Debug.DrawLine(firePos, (mousePos - firePos) * 100, Color.green);
+        gunFire.Play();
         GameObject newBullet = Instantiate(playerBulletPrefab, firePos,  transform.rotation);
         newBullet.GetComponent<Rigidbody2D>().velocity = (mousePos - firePos).normalized * speed;
         if (hit.collider != null)
