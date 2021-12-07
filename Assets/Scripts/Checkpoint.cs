@@ -16,6 +16,7 @@ public class Checkpoint : MonoBehaviour
         SpriteRenderer checkpointColor = GetComponent<SpriteRenderer>();
         checkpointColor.color = Color.yellow;
         checkPointReached = GetComponent<AudioSource>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
     }
 
@@ -36,15 +37,6 @@ public class Checkpoint : MonoBehaviour
 
     void Update()
     {
-        if (player == null)
-        {
-            GameObject playerCharacter = GameObject.FindGameObjectWithTag("Player");
-            if(playerCharacter != null)
-            {
-                player = playerCharacter.GetComponent<Player>();
-            }
-           
-        }
         if (player != null)
         {
             playerCheckpoint = player.getSpawnLocation();
@@ -58,6 +50,6 @@ public class Checkpoint : MonoBehaviour
                 SpriteRenderer checkpointColor = GetComponent<SpriteRenderer>();
                 checkpointColor.color = Color.red;
             }
-        }
+        } 
     }
 }

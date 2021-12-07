@@ -6,7 +6,7 @@ public class playerBullet : MonoBehaviour
 {
     private Vector3 bulletDirection = Vector3.zero;
     [SerializeField] Rigidbody2D rigidBody = null;
-    private float speed = 5.5f;
+    private float speed = 3.5f;
     private Vector3 currentVelocity = Vector3.zero;
     private float bulletTime = 2.0f;
    

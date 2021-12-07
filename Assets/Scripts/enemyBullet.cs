@@ -8,13 +8,13 @@ public class enemyBullet : MonoBehaviour
     [SerializeField] Rigidbody2D rigidBody = null;
     private float speed = 5.0f;
     private Vector3 currentVelocity = Vector3.zero;
-    private float bulletTime = 2.0f;
+    private float bulletTime = 1.0f;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        speed = 5.0f;
+        speed = 2.5f;
         currentVelocity = this.GetComponent<Rigidbody2D>().velocity;
     }
 

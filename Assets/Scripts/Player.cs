@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public bool hasGreenCollectable = false;
     public bool hasBlueCollectable = false;
     private SpriteRenderer playerSpriteRender = null;
+    [SerializeField] GameObject playerGun;
 
     private UIManager UI = null;
 
@@ -75,7 +76,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (GM.paused == false)
+        if (GM.paused == false && GM.playerAlive)
         {
             playerRigidbody.velocity = new Vector2(playerInput.x * Time.deltaTime * moveSpeed, playerRigidbody.velocity.y);
         }
@@ -85,7 +86,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GM.paused == false)
+        if (GM.paused == false && GM.playerAlive)
         {
             IsGrounded();
             Jump();
@@ -111,7 +112,7 @@ public class Player : MonoBehaviour
 
     public void Jump()
     {
-        if(Input.GetButtonDown("Jump") && IsGrounded())
+        if(Input.GetButtonDown("Jump") && IsGrounded() && GM.playerAlive)
         {
             playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, 20.0f);
         }
@@ -152,7 +153,12 @@ public class Player : MonoBehaviour
                 {
                     GM.PlayDeathAudio();
                     GM.playerAlive = false;
-                    Destroy(this.gameObject);
+                    playerSpriteRender.enabled = false;
+                    playerBoxCollider.enabled = false;
+                    playerGun.SetActive(false);
+                    playerRigidbody.velocity = new Vector2(0f, 0f);
+                    playerRigidbody.isKinematic = true;
+
                 }
             }
         }
@@ -202,4 +208,15 @@ public class Player : MonoBehaviour
         playerCurrentHealth = playerHealth;
         UI.UpdateHealth(playerCurrentHealth, playerMaxHealth);
     }
+
+    public void ReEnablePlayer()
+    {
+        playerSpriteRender.enabled = true;
+        playerBoxCollider.enabled = true;
+        playerGun.SetActive(true);
+        playerRigidbody.isKinematic = false;
+        playerCurrentHealth = playerMaxHealth;
+        transform.position = spawnLocation;
+    }
+
 }

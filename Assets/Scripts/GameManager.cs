@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public bool playerAlive = true;
     [SerializeField] GameObject player = null;
+    [SerializeField] Player playerObject = null;
     Vector2 spawnSpot = new Vector2(0, -1.5f);
     public bool canSpawn = false;
     public bool respawnEnemies = false;
@@ -20,7 +21,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Instantiate(player, spawnSpot, transform.rotation);
         playerAlive = true;
         canSpawn = false;
         playerDeath = GetComponent<AudioSource>();
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     {
         if(!playerAlive && canSpawn)
         {
-            Instantiate(player, spawnSpot, transform.rotation);
+            playerObject.ReEnablePlayer();
             playerAlive = true;
             canSpawn = false;
         }
